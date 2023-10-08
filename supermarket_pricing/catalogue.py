@@ -1,6 +1,6 @@
 from typing import Dict, Type, Union
 
-from supermarket_pricing.offers import ThreeForTwo
+from supermarket_pricing.offers import ThreeForTwo, TwoForPrice
 from supermarket_pricing.product import Product, ProductByKg
 
 PRODUCT_CATALOGUE: Dict[str, Union[Product, Type[Product]]] = {
@@ -13,4 +13,4 @@ PRODUCT_CATALOGUE: Dict[str, Union[Product, Type[Product]]] = {
 }
 
 
-OFFERS = [ThreeForTwo("beans")]
+OFFERS = [ThreeForTwo("beans"), TwoForPrice("coke", 1.0)]

@@ -29,4 +29,18 @@ class ThreeForTwo(Offer):
 
     def offer_amount(self, products: Dict[str, float]) -> float:
         number_of_offers = math.floor(products[self.eligible_product] / 3)
-        return number_of_offers * catalogue.PRODUCT_CATALOGUE[self.eligible_product].price
+        return round(number_of_offers * catalogue.PRODUCT_CATALOGUE[self.eligible_product].price, 2)
+
+
+class TwoForPrice(Offer):
+    def __init__(self, eligible_product: str, offer_price: float) -> None:
+        super().__init__(eligible_product)
+        self.offer_price = offer_price
+
+    def is_eligible(self, products: Dict[str, float]) -> bool:
+        return products.get(self.eligible_product, 0) > 2
+
+    def offer_amount(self, products: Dict[str, float]) -> float:
+        number_of_offers = math.floor(products[self.eligible_product] / 2)
+        saving_per_offer = (catalogue.PRODUCT_CATALOGUE[self.eligible_product].price * 2) - self.offer_price
+        return round(number_of_offers * saving_per_offer, 2)
