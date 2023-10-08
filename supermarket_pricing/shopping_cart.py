@@ -1,12 +1,12 @@
 import math
 from typing import Dict
 
+from supermarket_pricing.catalogue import OFFERS, PRODUCT_CATALOGUE
 from supermarket_pricing.exceptions import (
     InvalidProductException,
     ProductQuantityException,
 )
-from supermarket_pricing.offers import OFFERS
-from supermarket_pricing.product_catalogue import PRODUCT_CATALOGUE, PricingUnits
+from supermarket_pricing.product import PricingUnits
 
 
 class ShoppingCart:

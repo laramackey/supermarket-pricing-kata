@@ -2,7 +2,7 @@ import math
 from abc import ABC, abstractmethod
 from typing import Dict
 
-from supermarket_pricing.product_catalogue import PRODUCT_CATALOGUE
+import supermarket_pricing.catalogue as catalogue
 
 
 class Offer(ABC):
@@ -29,7 +29,4 @@ class ThreeForTwo(Offer):
 
     def offer_amount(self, products: Dict[str, float]) -> float:
         number_of_offers = math.floor(products[self.eligible_product] / 3)
-        return number_of_offers * PRODUCT_CATALOGUE[self.eligible_product].price
-
-
-OFFERS = [ThreeForTwo("beans")]
+        return number_of_offers * catalogue.PRODUCT_CATALOGUE[self.eligible_product].price
