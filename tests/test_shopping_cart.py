@@ -35,6 +35,20 @@ def test_get_total_for_multiple_items():
     assert cart.total == 4.17
 
 
+def test_get_total_for_beans_offer():
+    cart = ShoppingCart()
+    cart.add_product("beans")
+    cart.add_product("beans")
+    cart.add_product("beans")
+    cart.add_product("beans")
+    cart.add_product("beans")
+    cart.add_product("beans")
+    cart.add_product("beans")
+    assert cart.sub_total == 3.5
+    assert cart.savings == 1
+    assert cart.total == 2.5
+
+
 def test_raises_for_invalid_item():
     cart = ShoppingCart()
     with pytest.raises(InvalidProductException) as e:
