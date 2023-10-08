@@ -1,6 +1,10 @@
 import math
 from typing import Dict
 
+from supermarket_pricing.exceptions import (
+    InvalidProductException,
+    ProductQuantityException,
+)
 from supermarket_pricing.product_catalogue import PricingUnits, product_catalogue
 
 
@@ -10,12 +14,12 @@ class ShoppingCart:
 
     def add_product(self, product_name: str, quantity: float = 1.0):
         if product := product_catalogue.get(product_name):
-            if product.pricing_unit == PricingUnits.UNIT and not quantity.is_integer():
-                raise Exception("Product quantity must be specified in integers")
+            if product.pricing_unit == PricingUnits.UNIT and not float(quantity).is_integer():
+                raise ProductQuantityException(f"Product quantity for {product_name} must be specified in integers")
             self.products[product_name] = self.products.get(product_name, 0) + quantity
             print(f"| {product_name} | {product.price}")
         else:
-            raise Exception("Unexpected Item in Bagging Area")
+            raise InvalidProductException("Unexpected Item in Bagging Area")
 
     @property
     def total(self):

@@ -1,3 +1,8 @@
+import pytest
+from supermarket_pricing.exceptions import (
+    InvalidProductException,
+    ProductQuantityException,
+)
 from supermarket_pricing.shopping_cart import ShoppingCart
 
 
@@ -10,8 +15,7 @@ def test_get_total_for_one_item():
 def test_get_total_for_multiple_of_same_item():
     cart = ShoppingCart()
     cart.add_product("beans")
-    cart.add_product("beans")
-    cart.add_product("beans")
+    cart.add_product("beans", 2)
     assert cart.total == 1.5
 
 
@@ -28,6 +32,20 @@ def test_get_total_for_multiple_items():
     cart.add_product("coke")
     cart.add_product("onions", 1.2777)
     assert cart.total == 2.07
+
+
+def test_raises_for_invalid_item():
+    cart = ShoppingCart()
+    with pytest.raises(InvalidProductException) as e:
+        cart.add_product("tomacco")
+    assert "Unexpected Item in Bagging Area" in e.value.args[0]
+
+
+def test_raises_for_invalid_item_quantity():
+    cart = ShoppingCart()
+    with pytest.raises(ProductQuantityException) as e:
+        cart.add_product("coke", 1.5)
+    assert "Product quantity for coke must be specified in integers" in e.value.args[0]
 
 
 def test_product_price_rounded_down_to_2_decimal_places():
