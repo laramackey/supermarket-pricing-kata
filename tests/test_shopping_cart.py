@@ -28,10 +28,11 @@ def test_get_total_for_item_by_kg():
 def test_get_total_for_multiple_items():
     cart = ShoppingCart()
     cart.add_product("beans")
-    cart.add_product("beans")
+    cart.add_product("butcombe")
     cart.add_product("coke")
     cart.add_product("onions", 1.2777)
-    assert cart.total == 2.07
+    cart.add_product("beans")
+    assert cart.total == 4.17
 
 
 def test_raises_for_invalid_item():
