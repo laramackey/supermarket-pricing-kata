@@ -6,4 +6,5 @@ class Product:
 
 product_catalogue = {
     "beans": Product("beans", 0.5),
+    "coke": Product("coke", 0.7),
 }

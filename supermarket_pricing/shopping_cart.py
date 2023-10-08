@@ -10,7 +10,7 @@ class ShoppingCart:
     def add_product(self, product_name: str):
         if product := product_catalogue.get(product_name):
             self.products[product_name] = self.products.get(product_name, 0) + 1
-            print(product.price)
+            print(f"| {product_name} | {product.price}")
         else:
             raise Exception("Unexpected Item in Bagging Area")
 
