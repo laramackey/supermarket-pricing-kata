@@ -39,30 +39,17 @@ def test_get_total_for_multiple_items_without_offers():
     assert cart.total == 4.17
 
 
-def test_get_total_for_beans_offer():
+def test_get_total_for_with_offers():
     cart = ShoppingCart()
-    cart.add_product("beans")
-    cart.add_product("beans")
-    cart.add_product("beans")
-    cart.add_product("beans")
-    cart.add_product("beans")
-    cart.add_product("beans")
-    cart.add_product("beans")
-    assert cart.sub_total == 3.5
-    assert cart.savings == 1
-    assert cart.total == 2.5
-
-
-def test_get_total_for_coke_offer():
-    cart = ShoppingCart()
-    cart.add_product("coke")
-    cart.add_product("coke")
-    cart.add_product("coke")
-    cart.add_product("coke")
-    cart.add_product("coke")
-    assert cart.sub_total == 3.5
-    assert cart.savings == 0.8
-    assert cart.total == 2.7
+    cart.add_product("beans")  # 0.5
+    cart.add_product("beans")  # 0.5
+    cart.add_product("butcombe")  # 2.1
+    cart.add_product("coke")  # 0.7
+    cart.add_product("beans")  # 0.5
+    cart.add_product("beans")  # 0.5
+    assert cart.sub_total == 4.8
+    assert cart.savings == 0.5  # 3 for 2 beans
+    assert cart.total == 4.3
 
 
 def test_raises_for_invalid_item():
