@@ -22,17 +22,34 @@ def test_get_total_for_multiple_of_same_item():
 def test_get_total_for_item_by_kg():
     cart = ShoppingCart()
     cart.add_product("onions", 0.55)
+    assert cart.sub_total == 0.15
+    assert cart.savings == 0
     assert cart.total == 0.15
 
 
-def test_get_total_for_multiple_items():
+def test_get_total_for_multiple_items_without_offers():
     cart = ShoppingCart()
     cart.add_product("beans")
     cart.add_product("butcombe")
     cart.add_product("coke")
     cart.add_product("onions", 1.2777)
     cart.add_product("beans")
+    assert cart.sub_total == 4.17
+    assert cart.savings == 0
     assert cart.total == 4.17
+
+
+def test_get_total_for_with_offers():
+    cart = ShoppingCart()
+    cart.add_product("beans")  # 0.5
+    cart.add_product("beans")  # 0.5
+    cart.add_product("butcombe")  # 2.1
+    cart.add_product("coke")  # 0.7
+    cart.add_product("beans")  # 0.5
+    cart.add_product("beans")  # 0.5
+    assert cart.sub_total == 4.8
+    assert cart.savings == 0.5  # 3 for 2 beans
+    assert cart.total == 4.3
 
 
 def test_raises_for_invalid_item():
