@@ -31,7 +31,7 @@ def test_two_for_price_offer():
 
 def test_three_from_set_offer():
     offer = ThreeFromSetForPrice(
-        [TEST_PRODUCT_CATALOGUE["b"], TEST_PRODUCT_CATALOGUE["c"], TEST_PRODUCT_CATALOGUE["d"]], 3.0
+        [TEST_PRODUCT_CATALOGUE["b"], TEST_PRODUCT_CATALOGUE["c"], TEST_PRODUCT_CATALOGUE["d"]], 3.0, "letters"
     )
     cart_count = {
         "b": 1,  # Price 1.0

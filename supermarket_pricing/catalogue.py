@@ -1,9 +1,14 @@
-from typing import Dict, Type, Union
+from typing import Dict, List
 
-from supermarket_pricing.offers import ThreeForTwo, ThreeFromSetForPrice, TwoForPrice
+from supermarket_pricing.offers import (
+    Offer,
+    ThreeForTwo,
+    ThreeFromSetForPrice,
+    TwoForPrice,
+)
 from supermarket_pricing.product import Product, ProductByKg
 
-PRODUCT_CATALOGUE: Dict[str, Union[Product, Type[Product]]] = {
+PRODUCT_CATALOGUE: Dict[str, Product] = {
     "beans": Product("beans", 0.5),
     "coke": Product("coke", 0.7),
     "onions": ProductByKg("onions", 0.29),
@@ -13,10 +18,10 @@ PRODUCT_CATALOGUE: Dict[str, Union[Product, Type[Product]]] = {
 }
 
 
-OFFERS = [
+OFFERS: List[Offer] = [
     ThreeForTwo(PRODUCT_CATALOGUE["beans"]),
     TwoForPrice(PRODUCT_CATALOGUE["coke"], 1.0),
     ThreeFromSetForPrice(
-        [PRODUCT_CATALOGUE["arbor ale"], PRODUCT_CATALOGUE["kaleidoscope"], PRODUCT_CATALOGUE["butcombe"]], 6.0
+        [PRODUCT_CATALOGUE["arbor ale"], PRODUCT_CATALOGUE["kaleidoscope"], PRODUCT_CATALOGUE["butcombe"]], 6.0, "ales"
     ),
 ]
