@@ -10,7 +10,7 @@ from supermarket_pricing.exceptions import (
 from supermarket_pricing.offers import Offer
 from supermarket_pricing.product import PricingUnits, Product
 
-AddedProduct = namedtuple("AddedProduct", "name quantity")
+AddedProduct = namedtuple("AddedProduct", "name quantity price")
 AppliedOffer = namedtuple("AppliedOffer", "description offer_amount")
 
 
@@ -27,24 +27,25 @@ class ShoppingCart:
         self.applied_offers: List[AppliedOffer] = []
 
     def add_product(self, product_name: str, quantity: float = 1.0) -> None:
-        if catalogue_product := self.product_catalogue.get(product_name):
-            if catalogue_product.pricing_unit == PricingUnits.UNIT and not float(quantity).is_integer():
+        if product := self.product_catalogue.get(product_name):
+            if product.pricing_unit == PricingUnits.UNIT and not float(quantity).is_integer():
                 raise ProductQuantityException(f"Product quantity for {product_name} must be specified in integers")
             self.product_quantities[product_name] = self.product_quantities.get(product_name, 0) + quantity
-            self.products_in_cart.append(AddedProduct(product_name, quantity))
+            self.products_in_cart.append(
+                AddedProduct(product, quantity, self.__get_product_quantity_price(product, quantity))
+            )
         else:
             raise InvalidProductException("Unexpected Item in Bagging Area")
 
+    def __get_product_quantity_price(self, product: Product, quantity: float) -> float:
+        if product.pricing_unit == PricingUnits.UNIT:
+            return product.price * quantity
+        elif product.pricing_unit == PricingUnits.KG:
+            return self.__round_down_price(product.price * quantity)
+
     @property
     def sub_total(self) -> float:
-        total = 0.0
-        for name, quantity in self.product_quantities.items():
-            product = self.product_catalogue[name]
-            if product.pricing_unit == PricingUnits.UNIT:
-                total += product.price * quantity
-            elif product.pricing_unit == PricingUnits.KG:
-                total += self.__round_down_price(product.price * quantity)
-        return total
+        return sum(product.price for product in self.products_in_cart)
 
     @property
     def savings(self) -> float:
