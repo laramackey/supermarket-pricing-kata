@@ -6,6 +6,11 @@ from supermarket_pricing.exceptions import InvalidProductException
 
 
 class Price(Decimal):
+    """
+    SubClass of Decimal which formats the value as a two decimal price in pounds (£)
+    Overrides __add__ __sub__ and __mul__ to ensure arithmatic operations result in a Price
+    """
+
     def __str__(self):
         getcontext().rounding = "ROUND_DOWN"
         return f"£{self.quantize(Decimal('00.00')):.2f}"
@@ -26,6 +31,10 @@ class Price(Decimal):
 
 
 class Weight(Decimal):
+    """
+    SubClass of Decimal which formats the value as a three decimal value
+    """
+
     def __str__(self):
         getcontext().rounding = "ROUND_DOWN"
         return f"{self.quantize(Decimal('0.000')):.3f}"
@@ -38,6 +47,11 @@ class PricingUnits(str, Enum):
 
 @dataclass
 class Product:
+    """
+    Represents a product with name and price, defaults to be priced by unit
+    Does not allow for prices to be more granualr than 2 decimal places
+    """
+
     name: str
     price: Price
     pricing_unit = PricingUnits.UNIT
@@ -53,4 +67,8 @@ class Product:
 
 @dataclass
 class ProductByKg(Product):
+    """
+    Represents a product with name and price, prices by kg
+    """
+
     pricing_unit = PricingUnits.KG
