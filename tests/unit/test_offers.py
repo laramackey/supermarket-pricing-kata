@@ -53,7 +53,7 @@ def test_multiple_two_for_price_offer(test_product_catalogue):
 
 def test_singular_three_from_set_offer(test_product_catalogue):
     offer = ThreeFromSetForPrice(
-        [test_product_catalogue["b"], test_product_catalogue["c"], test_product_catalogue["d"]], Price("3.0"), "letters"
+        (test_product_catalogue["b"], test_product_catalogue["c"], test_product_catalogue["d"]), Price("3.0"), "letters"
     )
     cart_count = {
         "b": 1,  # Price 1.0
@@ -68,7 +68,7 @@ def test_singular_three_from_set_offer(test_product_catalogue):
 
 def test_multiple_three_from_set_offer(test_product_catalogue):
     offer = ThreeFromSetForPrice(
-        [test_product_catalogue["b"], test_product_catalogue["c"], test_product_catalogue["d"]], Price("3.0"), "letters"
+        (test_product_catalogue["b"], test_product_catalogue["c"], test_product_catalogue["d"]), Price("3.0"), "letters"
     )
     cart_count = {
         "b": 1,  # Price 1.0
