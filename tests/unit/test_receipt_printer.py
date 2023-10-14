@@ -1,16 +1,47 @@
+from typing import List
+
 from supermarket_pricing.receipt_printer import print_receipt
-from supermarket_pricing.shopping_cart import AddedProduct
+from supermarket_pricing.shopping_cart import AddedProduct, AppliedOffer
 
 
 class StubCart:
-    def __init__(self, products_in_cart):
+    def __init__(
+        self,
+        products_in_cart: List[AddedProduct] = [],
+        applied_offers: List[AppliedOffer] = [],
+        sub_total=0.0,
+        savings=0.0,
+        total=0.0,
+    ):
         self.products_in_cart = products_in_cart
+        self.applied_offers = applied_offers
+        self.sub_total = sub_total
+        self.savings = savings
+        self.total = total
 
 
-def test_prints_receipt_for_one_item(capsys):
-    products_in_cart = [AddedProduct("green eggs", 2, 5.98), AddedProduct("ham", 1, 4.5)]
-    cart = StubCart(products_in_cart)
+def test_prints_receipt_for_items_priced_by_quantity(capsys):
+    products_in_cart = [AddedProduct("green eggs", 2, 5.98, 0), AddedProduct("ham", 1, 4.5, 0)]
+    cart = StubCart(products_in_cart=products_in_cart)
     print_receipt(cart)
     captured = capsys.readouterr()
-    expected_output = "green eggs: 5.98\nham: 4.5\n"
+    expected_output = """| Green eggs x 2       |  £5.98 |
+| Ham                  |  £4.50 |
+"""
+    assert captured.out == expected_output
+
+
+def test_prints_receipt_for_items_priced_by_weight(capsys):
+    products_in_cart = [
+        AddedProduct("mushrooms", 0.567, 1.68, 2.97),
+        AddedProduct("brussel sprouts", 0.232, 0.348, 1.5),
+    ]
+    cart = StubCart(products_in_cart=products_in_cart)
+    print_receipt(cart)
+    captured = capsys.readouterr()
+    expected_output = """| Mushrooms            |        |
+| 0.567 kg @ £2.97/kg  |  £1.68 |
+| Brussel sprouts      |        |
+| 0.232 kg @ £1.50/kg  |  £0.35 |
+"""
     assert captured.out == expected_output

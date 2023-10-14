@@ -10,7 +10,7 @@ from supermarket_pricing.exceptions import (
 from supermarket_pricing.offers import Offer
 from supermarket_pricing.product import PricingUnits, Product
 
-AddedProduct = namedtuple("AddedProduct", "name quantity price")
+AddedProduct = namedtuple("AddedProduct", "name quantity price price_per_kg")
 AppliedOffer = namedtuple("AppliedOffer", "description offer_amount")
 
 
@@ -31,8 +31,9 @@ class ShoppingCart:
             if product.pricing_unit == PricingUnits.UNIT and not float(quantity).is_integer():
                 raise ProductQuantityException(f"Product quantity for {product_name} must be specified in integers")
             self.product_quantities[product_name] = self.product_quantities.get(product_name, 0) + quantity
+            price_per_kg = product.price if product.pricing_unit == PricingUnits.KG else 0
             self.products_in_cart.append(
-                AddedProduct(product, quantity, self.__get_product_quantity_price(product, quantity))
+                AddedProduct(product, quantity, self.__get_product_quantity_price(product, quantity), price_per_kg)
             )
         else:
             raise InvalidProductException("Unexpected Item in Bagging Area")
