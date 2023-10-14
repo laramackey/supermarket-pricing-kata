@@ -33,7 +33,7 @@ class ShoppingCart:
             self.product_quantities[product_name] = self.product_quantities.get(product_name, 0) + quantity
             price_per_kg = product.price if product.pricing_unit == PricingUnits.KG else 0
             self.products_in_cart.append(
-                AddedProduct(product, quantity, self.__get_product_quantity_price(product, quantity), price_per_kg)
+                AddedProduct(product_name, quantity, self.__get_product_quantity_price(product, quantity), price_per_kg)
             )
         else:
             raise InvalidProductException("Unexpected Item in Bagging Area")

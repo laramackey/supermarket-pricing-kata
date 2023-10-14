@@ -12,6 +12,7 @@ PRODUCT_CATALOGUE: Dict[str, Product] = {
     "beans": Product("beans", 0.5),
     "coke": Product("coke", 0.7),
     "onions": ProductByKg("onions", 0.29),
+    "oranges": ProductByKg("oranges", 1.99),
     "arbor ale": Product("arbor ale", 2.2),
     "kaleidoscope": Product("kaleidoscope", 2.5),
     "butcombe": Product("butcombe", 2.1),
