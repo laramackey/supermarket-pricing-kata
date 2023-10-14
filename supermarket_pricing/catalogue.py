@@ -6,23 +6,25 @@ from supermarket_pricing.offers import (
     ThreeFromSetForPrice,
     TwoForPrice,
 )
-from supermarket_pricing.product import Product, ProductByKg
+from supermarket_pricing.product import Price, Product, ProductByKg
 
 PRODUCT_CATALOGUE: Dict[str, Product] = {
-    "beans": Product("beans", 0.5),
-    "coke": Product("coke", 0.7),
-    "onions": ProductByKg("onions", 0.29),
-    "oranges": ProductByKg("oranges", 1.99),
-    "arbor ale": Product("arbor ale", 2.2),
-    "kaleidoscope": Product("kaleidoscope", 2.5),
-    "butcombe": Product("butcombe", 2.1),
+    "beans": Product("beans", Price("0.5")),
+    "coke": Product("coke", Price("0.7")),
+    "onions": ProductByKg("onions", Price("0.29")),
+    "oranges": ProductByKg("oranges", Price("1.99")),
+    "arbor ale": Product("arbor ale", Price("2.2")),
+    "kaleidoscope": Product("kaleidoscope", Price("2.5")),
+    "butcombe": Product("butcombe", Price("2.1")),
 }
 
 
 OFFERS: List[Offer] = [
     ThreeForTwo(PRODUCT_CATALOGUE["beans"]),
-    TwoForPrice(PRODUCT_CATALOGUE["coke"], 1.0),
+    TwoForPrice(PRODUCT_CATALOGUE["coke"], Price("1")),
     ThreeFromSetForPrice(
-        [PRODUCT_CATALOGUE["arbor ale"], PRODUCT_CATALOGUE["kaleidoscope"], PRODUCT_CATALOGUE["butcombe"]], 6.0, "ales"
+        [PRODUCT_CATALOGUE["arbor ale"], PRODUCT_CATALOGUE["kaleidoscope"], PRODUCT_CATALOGUE["butcombe"]],
+        Price("6"),
+        "ales",
     ),
 ]

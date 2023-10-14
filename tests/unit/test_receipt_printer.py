@@ -1,5 +1,7 @@
+from decimal import Decimal
 from typing import List
 
+from supermarket_pricing.product import Price, Weight
 from supermarket_pricing.receipt_printer import print_receipt
 from supermarket_pricing.shopping_cart import AddedProduct, AppliedOffer
 
@@ -9,9 +11,9 @@ class StubCart:
         self,
         products_in_cart: List[AddedProduct] = [],
         applied_offers: List[AppliedOffer] = [],
-        sub_total=0.0,
-        savings=0.0,
-        total=0.0,
+        sub_total: Price = Price("0"),
+        savings: Price = Price("0"),
+        total: Price = Price("0"),
     ):
         self.products_in_cart = products_in_cart
         self.applied_offers = applied_offers
@@ -21,8 +23,11 @@ class StubCart:
 
 
 def test_prints_receipt_for_items_priced_by_quantity(capsys):
-    products_in_cart = [AddedProduct("green eggs", 2, 5.98, 0), AddedProduct("ham", 1, 4.5, 0)]
-    cart = StubCart(products_in_cart=products_in_cart, total=10.48)
+    products_in_cart = [
+        AddedProduct("green eggs", Decimal("2"), Price("5.98"), Decimal("0")),
+        AddedProduct("ham", Decimal("1"), Price("4.5"), Decimal("0")),
+    ]
+    cart = StubCart(products_in_cart=products_in_cart, total=Price("10.48"))
     print_receipt(cart)
     captured = capsys.readouterr()
     expected_output = """| Green eggs x 2       |  £5.98 |
@@ -34,16 +39,16 @@ def test_prints_receipt_for_items_priced_by_quantity(capsys):
 
 def test_prints_receipt_for_items_priced_by_weight(capsys):
     products_in_cart = [
-        AddedProduct("mushrooms", 0.567, 1.68, 2.97),
-        AddedProduct("brussel sprouts", 0.232, 0.348, 1.5),
+        AddedProduct("mushrooms", Weight("0.567"), Price("1.68"), Price("2.97")),
+        AddedProduct("brussel sprouts", Weight("0.232"), Price("0.348"), Price("1.5")),
     ]
-    cart = StubCart(products_in_cart=products_in_cart, total=2.03)
+    cart = StubCart(products_in_cart=products_in_cart, total=Price("2.03"))
     print_receipt(cart)
     captured = capsys.readouterr()
     expected_output = """| Mushrooms            |        |
 | 0.567 kg @ £2.97/kg  |  £1.68 |
 | Brussel sprouts      |        |
-| 0.232 kg @ £1.50/kg  |  £0.35 |
+| 0.232 kg @ £1.50/kg  |  £0.34 |
 | **Total to Pay**     |  £2.03 |
 """
     assert captured.out == expected_output
@@ -51,19 +56,19 @@ def test_prints_receipt_for_items_priced_by_weight(capsys):
 
 def test_prints_receipt_for_mix_of_items_without_offers(capsys):
     products_in_cart = [
-        AddedProduct("green eggs", 2, 5.98, 0),
-        AddedProduct("mushrooms", 0.567, 1.68, 2.97),
-        AddedProduct("brussel sprouts", 0.232, 0.348, 1.5),
-        AddedProduct("ham", 1, 4.5, 0),
+        AddedProduct("green eggs", Decimal("2"), Price("5.98"), Price("0")),
+        AddedProduct("mushrooms", Weight("0.567"), Price("1.68"), Price("2.97")),
+        AddedProduct("brussel sprouts", Weight("0.232"), Price("0.348"), Price("1.5")),
+        AddedProduct("ham", Decimal("1"), Price("4.5"), Price("0")),
     ]
-    cart = StubCart(products_in_cart=products_in_cart, total=12.51)
+    cart = StubCart(products_in_cart=products_in_cart, total=Price("12.51"))
     print_receipt(cart)
     captured = capsys.readouterr()
     expected_output = """| Green eggs x 2       |  £5.98 |
 | Mushrooms            |        |
 | 0.567 kg @ £2.97/kg  |  £1.68 |
 | Brussel sprouts      |        |
-| 0.232 kg @ £1.50/kg  |  £0.35 |
+| 0.232 kg @ £1.50/kg  |  £0.34 |
 | Ham                  |  £4.50 |
 | **Total to Pay**     | £12.51 |
 """
@@ -72,14 +77,21 @@ def test_prints_receipt_for_mix_of_items_without_offers(capsys):
 
 def test_prints_receipt_for_mix_of_items_with_offers(capsys):
     products_in_cart = [
-        AddedProduct("green eggs", 2, 5.98, 0),
-        AddedProduct("mushrooms", 0.567, 1.68, 2.97),
-        AddedProduct("brussel sprouts", 0.232, 0.348, 1.5),
-        AddedProduct("ham", 1, 4.5, 0),
+        AddedProduct("green eggs", Decimal("2"), Price("5.98"), Price("0")),
+        AddedProduct("mushrooms", Weight("0.567"), Price("1.68"), Price("2.97")),
+        AddedProduct("brussel sprouts", Weight("0.232"), Price("0.348"), Price("1.5")),
+        AddedProduct("ham", Decimal("1"), Price(" 4.5"), Price("0")),
     ]
-    applied_offers = [AppliedOffer("Green eggs 2 for 1", 2.99), AppliedOffer("Mushrooms 50p off", 0.5)]
+    applied_offers = [
+        AppliedOffer("Green eggs 2 for 1", Price("2.99")),
+        AppliedOffer("Mushrooms 50p off", Price("0.5")),
+    ]
     cart = StubCart(
-        products_in_cart=products_in_cart, applied_offers=applied_offers, sub_total=12.51, savings=3.49, total=9.02
+        products_in_cart=products_in_cart,
+        applied_offers=applied_offers,
+        sub_total=Price("12.51"),
+        savings=Price("3.49"),
+        total=Price("9.02"),
     )
     print_receipt(cart)
     captured = capsys.readouterr()
@@ -87,7 +99,7 @@ def test_prints_receipt_for_mix_of_items_with_offers(capsys):
 | Mushrooms            |        |
 | 0.567 kg @ £2.97/kg  |  £1.68 |
 | Brussel sprouts      |        |
-| 0.232 kg @ £1.50/kg  |  £0.35 |
+| 0.232 kg @ £1.50/kg  |  £0.34 |
 | Ham                  |  £4.50 |
 | **Sub-total**        | £12.51 |
 | **Savings**          |        |

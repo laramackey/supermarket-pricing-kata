@@ -7,7 +7,7 @@ def test_supermarket_receipt_without_offers(capsys):
     cart.add_product("beans")
     cart.add_product("butcombe")
     cart.add_product("coke")
-    cart.add_product("onions", 1.2777)
+    cart.add_product("onions", "1.2777")
     cart.add_product("beans")
     print_receipt(cart)
     captured = capsys.readouterr()
@@ -15,7 +15,7 @@ def test_supermarket_receipt_without_offers(capsys):
 | Butcombe             |  £2.10 |
 | Coke                 |  £0.70 |
 | Onions               |        |
-| 1.278 kg @ £0.29/kg  |  £0.37 |
+| 1.277 kg @ £0.29/kg  |  £0.37 |
 | Beans                |  £0.50 |
 | **Total to Pay**     |  £4.17 |
 """
@@ -29,7 +29,7 @@ def test_supermarket_receipt_with_offers(capsys):
     cart.add_product("beans")
     cart.add_product("coke")
     cart.add_product("coke")
-    cart.add_product("oranges", 0.2)
+    cart.add_product("oranges", "0.2")
     cart.add_product("arbor ale")
     cart.add_product("kaleidoscope")
     cart.add_product("kaleidoscope")
