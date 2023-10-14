@@ -9,6 +9,8 @@ from supermarket_pricing.shopping_cart import ShoppingCart
 def test_get_total_for_one_item():
     cart = ShoppingCart()
     cart.add_product("beans")
+    assert cart.sub_total == 0.5
+    assert cart.savings == 0
     assert cart.total == 0.5
 
 
@@ -16,7 +18,9 @@ def test_get_total_for_multiple_of_same_item():
     cart = ShoppingCart()
     cart.add_product("beans")
     cart.add_product("beans", 2)
-    assert cart.total == 1.5
+    assert cart.sub_total == 1.5
+    assert cart.savings == 0.5
+    assert cart.total == 1.0
 
 
 def test_get_total_for_item_by_kg():

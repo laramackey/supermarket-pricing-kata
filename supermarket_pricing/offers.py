@@ -5,6 +5,9 @@ from supermarket_pricing.product import Product
 
 
 class Offer(ABC):
+    def __init__(self) -> None:
+        self.short_description = ""
+
     @abstractmethod
     def is_eligible(self, product_quantities: Dict[str, float]) -> bool:
         raise NotImplementedError
@@ -22,9 +25,10 @@ class Offer(ABC):
 class ThreeForTwo(Offer):
     def __init__(self, eligible_product: Product | type[Product]) -> None:
         self.eligible_product = eligible_product
+        self.short_description = f"{eligible_product.name} 3 for 2"
 
     def is_eligible(self, product_quantities: Dict[str, float]) -> bool:
-        return product_quantities.get(self.eligible_product.name, 0) > 3
+        return product_quantities.get(self.eligible_product.name, 0) >= 3
 
     def offer_amount(self, product_quantities: Dict[str, float]) -> float:
         number_of_offers = product_quantities[self.eligible_product.name] // 3
@@ -35,9 +39,10 @@ class TwoForPrice(Offer):
     def __init__(self, eligible_product: Product | type[Product], offer_price: float) -> None:
         self.eligible_product = eligible_product
         self.offer_price = offer_price
+        self.short_description = f"{eligible_product.name} 2 for £{offer_price:.2f}"
 
     def is_eligible(self, product_quantities: Dict[str, float]) -> bool:
-        return product_quantities.get(self.eligible_product.name, 0) > 2
+        return product_quantities.get(self.eligible_product.name, 0) >= 2
 
     def offer_amount(self, product_quantities: Dict[str, float]) -> float:
         number_of_offers = product_quantities[self.eligible_product.name] // 2
@@ -46,9 +51,12 @@ class TwoForPrice(Offer):
 
 
 class ThreeFromSetForPrice(Offer):
-    def __init__(self, eligible_products: List[Product | type[Product]], offer_price: float) -> None:
+    def __init__(
+        self, eligible_products: List[Product | type[Product]], offer_price: float, offer_category: str
+    ) -> None:
         self.eligible_products = eligible_products
         self.offer_price = offer_price
+        self.short_description = f"{offer_category} 3 for £{offer_price:.2f}"
         self.product_list: List[Product | Type[Product]] = []
         self.eligible_product_count = 0
 
@@ -60,7 +68,7 @@ class ThreeFromSetForPrice(Offer):
             product for product in products_sorted_by_price for _ in range(int(found_products.get(product.name, 0)))
         ]
         self.eligible_product_count = len(self.product_list)
-        return self.eligible_product_count > 3
+        return self.eligible_product_count >= 3
 
     def offer_amount(self, _product_quantities: Dict[str, float]) -> float:
         number_of_offers = self.eligible_product_count // 3
