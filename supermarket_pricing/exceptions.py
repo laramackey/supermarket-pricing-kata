@@ -8,3 +8,7 @@ class ProductQuantityException(ShoppingCartException):
 
 class InvalidProductException(ShoppingCartException):
     pass
+
+
+class ProductException(Exception):
+    pass
