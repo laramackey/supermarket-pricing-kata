@@ -3,12 +3,12 @@ from typing import Union
 from supermarket_pricing.shopping_cart import ShoppingCart
 
 
-def print_receipt_row(description: str, price: Union[str, float] = ""):
+def print_receipt_row(description: str, price: Union[str, float] = "") -> None:
     formatted_price = f"£{price:.2f}" if isinstance(price, float) else price
     print("|", description.ljust(20), "|", formatted_price.rjust(6), "|")
 
 
-def print_receipt(cart: ShoppingCart):
+def print_receipt(cart: ShoppingCart) -> None:
     for product in cart.products_in_cart:
         product_name = product.name.capitalize()
         if product.price_per_kg:

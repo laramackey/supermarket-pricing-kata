@@ -35,9 +35,4 @@ profile = "black"
 src_paths = ["person_hub_glue", "tests"]
 
 [tool.mypy]
-ignore_missing_imports = true
-allow_untyped_calls = true
-allow_untyped_defs = true
-allow_incomplete_defs = true
-implicit_optional = true
 pretty = true
