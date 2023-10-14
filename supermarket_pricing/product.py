@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from decimal import Decimal, getcontext
+from decimal import ROUND_DOWN, Decimal
 from enum import Enum
 
-from supermarket_pricing.exceptions import InvalidProductException
+from supermarket_pricing.exceptions import InvalidProductPriceException
 
 
 class Price(Decimal):
@@ -12,8 +12,7 @@ class Price(Decimal):
     """
 
     def __str__(self):
-        getcontext().rounding = "ROUND_DOWN"
-        return f"£{self.quantize(Decimal('00.00')):.2f}"
+        return f"£{self.quantize(Decimal('00.00'), rounding=ROUND_DOWN):.2f}"
 
     def __add__(self, other):
         result = super().__add__(other)
@@ -36,8 +35,7 @@ class Weight(Decimal):
     """
 
     def __str__(self):
-        getcontext().rounding = "ROUND_DOWN"
-        return f"{self.quantize(Decimal('0.000')):.3f}"
+        return f"{self.quantize(Decimal('0.000'), rounding=ROUND_DOWN):.3f}"
 
 
 class PricingUnits(str, Enum):
@@ -60,7 +58,7 @@ class Product:
         if (
             self.price.as_tuple().exponent < -2
         ):  # Eventhough this can be rounded down, it's likely a mistake if more than 2 decimal places are specified
-            raise InvalidProductException(
+            raise InvalidProductPriceException(
                 f"Invalid product price {self.price}: must not have more than 2 decimal places"
             )
 

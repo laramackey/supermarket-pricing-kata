@@ -1,5 +1,5 @@
 import pytest
-from supermarket_pricing.exceptions import InvalidProductException
+from supermarket_pricing.exceptions import InvalidProductPriceException
 from supermarket_pricing.product import Price, Product, Weight
 
 
@@ -36,6 +36,6 @@ def test_weight_class_prints_to_three_decimal_places(capsys, price, price_string
 
 
 def test_raises_product_with_invalid_price():
-    with pytest.raises(InvalidProductException) as e:
+    with pytest.raises(InvalidProductPriceException) as e:
         Product("foo", Price("0.333"))
     assert "Invalid product price 0.333: must not have more than 2 decimal places" in e.value.args[0]

@@ -12,3 +12,7 @@ class InvalidProductException(ShoppingCartException):
 
 class ProductException(Exception):
     pass
+
+
+class InvalidProductPriceException(ProductException):
+    pass
