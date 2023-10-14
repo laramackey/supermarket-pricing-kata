@@ -1,6 +1,6 @@
 from collections import namedtuple
 from decimal import ROUND_DOWN, Decimal, InvalidOperation
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from supermarket_pricing.catalogue import OFFERS, PRODUCT_CATALOGUE
 from supermarket_pricing.exceptions import (
@@ -18,7 +18,7 @@ class ShoppingCart:
     def __init__(
         self,
         product_catalogue: Dict[str, Product] = PRODUCT_CATALOGUE,
-        offers_catalogue: List[Offer] = OFFERS,
+        offers_catalogue: Tuple[Offer, ...] = OFFERS,
     ) -> None:
         self.product_catalogue = product_catalogue
         self.offers_catalogue = offers_catalogue
@@ -70,7 +70,7 @@ class ShoppingCart:
         return quantity
 
     @staticmethod
-    def __decimal_is_int(number: Decimal):
+    def __decimal_is_int(number: Decimal) -> bool:
         return number.as_integer_ratio()[1] == 1
 
     @staticmethod

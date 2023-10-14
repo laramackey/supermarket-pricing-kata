@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from decimal import Decimal
-from typing import Dict, List, Type
+from typing import Dict, List, Tuple, Type
 
 from supermarket_pricing.product import Price, Product
 
@@ -53,9 +53,7 @@ class TwoForPrice(Offer):
 
 
 class ThreeFromSetForPrice(Offer):
-    def __init__(
-        self, eligible_products: List[Product | type[Product]], offer_price: Decimal, offer_category: str
-    ) -> None:
+    def __init__(self, eligible_products: Tuple[Product, ...], offer_price: Decimal, offer_category: str) -> None:
         self.eligible_products = eligible_products
         self.offer_price = offer_price
         self.short_description = f"{offer_category} 3 for {str(offer_price)}"

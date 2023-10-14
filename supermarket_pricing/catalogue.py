@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, Tuple
 
 from supermarket_pricing.offers import (
     Offer,
@@ -19,12 +19,12 @@ PRODUCT_CATALOGUE: Dict[str, Product] = {
 }
 
 
-OFFERS: List[Offer] = [
+OFFERS: Tuple[Offer, ...] = (
     ThreeForTwo(PRODUCT_CATALOGUE["beans"]),
     TwoForPrice(PRODUCT_CATALOGUE["coke"], Price("1")),
     ThreeFromSetForPrice(
-        [PRODUCT_CATALOGUE["arbor ale"], PRODUCT_CATALOGUE["kaleidoscope"], PRODUCT_CATALOGUE["butcombe"]],
+        (PRODUCT_CATALOGUE["arbor ale"], PRODUCT_CATALOGUE["kaleidoscope"], PRODUCT_CATALOGUE["butcombe"]),
         Price("6"),
         "ales",
     ),
-]
+)
