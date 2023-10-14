@@ -66,25 +66,20 @@ def test_raises_for_invalid_item():
     assert "Unexpected Item in Bagging Area" in e.value.args[0]
 
 
-def test_raises_for_invalid_item_quantity():
+@pytest.mark.parametrize(
+    "input_value, error",
+    [
+        ("1.5", "specified in integers"),
+        ("0", "a positive value"),
+        ("-8", "a positive value"),
+        ("a million", "a valid number"),
+    ],
+)
+def test_raises_for_invalid_item_quantity(input_value, error):
     cart = ShoppingCart()
     with pytest.raises(ProductQuantityException) as e:
-        cart.add_product("coke", "1.5")
-    assert "Product quantity for coke must be specified in integers" in e.value.args[0]
-
-
-def test_raises_for_zero_item_quantity():
-    cart = ShoppingCart()
-    with pytest.raises(ProductQuantityException) as e:
-        cart.add_product("coke", "0")
-    assert "Product quantity for coke must be a positive value" in e.value.args[0]
-
-
-def test_raises_for_negative_item_quantity():
-    cart = ShoppingCart()
-    with pytest.raises(ProductQuantityException) as e:
-        cart.add_product("coke", "-8")
-    assert "Product quantity for coke must be a positive value" in e.value.args[0]
+        cart.add_product("coke", input_value)
+    assert f"Product quantity for coke must be {error}" in e.value.args[0]
 
 
 @pytest.mark.parametrize(

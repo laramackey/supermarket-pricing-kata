@@ -1,5 +1,5 @@
 from collections import namedtuple
-from decimal import ROUND_DOWN, Decimal
+from decimal import ROUND_DOWN, Decimal, InvalidOperation
 from typing import Dict, List
 
 from supermarket_pricing.catalogue import OFFERS, PRODUCT_CATALOGUE
@@ -28,11 +28,7 @@ class ShoppingCart:
 
     def add_product(self, product_name: str, input_quantity: str = "1") -> None:
         if product := self.product_catalogue.get(product_name):
-            quantity = Weight(input_quantity) if product.pricing_unit == PricingUnits.KG else Decimal(input_quantity)
-            if quantity <= 0:
-                raise ProductQuantityException(f"Product quantity for {product_name} must be a positive value")
-            if product.pricing_unit == PricingUnits.UNIT and not self.__decimal_is_int(quantity):
-                raise ProductQuantityException(f"Product quantity for {product_name} must be specified in integers")
+            quantity = self.__parse_quantity(input_quantity, product)
             self.product_quantities[product_name] = self.product_quantities.get(product_name, 0) + quantity
             price_per_kg = product.price if product.pricing_unit == PricingUnits.KG else 0
             self.products_in_cart.append(
@@ -61,6 +57,17 @@ class ShoppingCart:
     @property
     def total(self) -> Price:
         return self.sub_total - self.savings
+
+    def __parse_quantity(self, input_quantity: str, product: Product) -> Decimal:
+        try:
+            quantity = Weight(input_quantity) if product.pricing_unit == PricingUnits.KG else Decimal(input_quantity)
+        except InvalidOperation:
+            raise ProductQuantityException(f"Product quantity for {product.name} must be a valid number")
+        if quantity <= 0:
+            raise ProductQuantityException(f"Product quantity for {product.name} must be a positive value")
+        if product.pricing_unit == PricingUnits.UNIT and not self.__decimal_is_int(quantity):
+            raise ProductQuantityException(f"Product quantity for {product.name} must be specified in integers")
+        return quantity
 
     @staticmethod
     def __decimal_is_int(number: Decimal):
