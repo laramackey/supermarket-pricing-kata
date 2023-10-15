@@ -1,6 +1,6 @@
 # Supermarket Pricing Calculator
 
-## Requirements
+## Functional Requirements
 
 Write a program which works out how to price a shopping basket, allowing for different pricing structures including:
 
@@ -29,7 +29,7 @@ Here’s an example of a receipt illustrating the type of output that should be 
 
 ## Instructions
 
-### Pre-requrisites
+### Pre-requisites
 
 1. Install **Python 3.10.13**
 
@@ -58,43 +58,47 @@ make test
 
 ### Process
 
-I approached this coding exercise by applying Test-Driven Development principles. I initiated the process by addressing the simplest scenario, which was having a cart with a single item. Then, I gradually introduced more complexity to the code, maintaining a clear sense of progress. The optimization phase came after implementing the primary requirements, enhancing the readability and robustness of the code. You can review the specific steps and decisions in the pull requests I created. I introduced simple CI/CD early to ensure only linted and passing code made it's way on the main branch, and it also gave me a good level of confidence when refactoring that I had maintained the desired behaviour.
+-   I approached this exercise by applying Test-Driven Development principles. I started with the simplest scenario, having a cart with a single item. Then, I gradually introduced the other features such as adding items by weight and offers. After implementing the primary requirements, I worked on improving the readability and robustness of the code. You can review the specific steps in the closed pull requests.
+-   I introduced simple CI/CD early to ensure only linted and passing code made it to the main branch, and to provide confidence when refactoring that I had maintained the desired behaviour.
 
 ### Design Choices
 
-Several key design choices informed the development of this solution:
-
 -   Separation of concerns
-    -   I kept `Offer`s and `Product`s as distinct objects. This choice offers more flexibility when adding or removing offers and allows for the application of discounts across multiple products. At first I considered associating offers directly with products for simplicity but would not fit the requirement for discounts across products. This approach would also require modifying a product each time a discount changes, which could become cumbersome if discounts are frequently change.
-    -   Another example fo seperation of concerns is with the `ShoppingCart` and `print_receipt`. `print_receipt` is only resposible for formatting and printing items in the cart, whereas the `ShoppingCart` is responsibly for storing the items in the cart and calculating the total.
--   The `add_product` method increments product_quantities each time a product is added. I considered calculating product quantities only when getting the savings, as this is the only time it's needed and would be more memory efficient. However, this would have increased the time complexity to O(n) instead of the efficient O(1).
--   I used abstract classes for offers to guarantee a consistent structure and behavior across different types of offers.
--   Using data classes for products enables handling tasks like price validation and provides an inheritance structure for different product types.
--   `ShoppingCart` is a class as it is responsible for managing the state of the cart, which includes storing product information. I've used a property method to provide simple access to cart-related information.
--   `print_receipt` is just a function. This is to keeps things simple, as there is no need to store additional information for receipt generation.
--   After completing the main task, I made the decision to switch from using floats to using Decimals for price calculations. This transition was driven by the need for precision in financial applications. While it introduced some complexity, such as converting all values to decimal to perform arithmetic operations, and is less performant, it addressed issues related to float-based rounding errors (example below). It also removed rounding and string formatting in multiple places which is error prone.
+    -   I kept `Offer`s and `Product`s as distinct objects. This increases flexibility when adding or removing offers and allows for multi-product offers. At first I considered associating offers directly with products for simplicity, but this would not allow for an offer to be eligible across multiple products. This approach would also require modifying a product each time a offer changes, which could become cumbersome if offers are frequently changed.
+    -   The `ShoppingCart` and `print_receipt` seperates the tasks of calculating totals and the formatting of receipts.
+-   I used abstract classes for `Offer`s to guarantee a consistent structure and behavior across different types of offers.
+-   I used data classes for `Product`s to handle tasks like price validation and provides an inheritance structure for different product types.
+-   `ShoppingCart` is implemented as a class as it is responsible for managing the state of the cart and performing calculations. `@property` methods are used to provide simple access to cart-related information.
+-   The `ShoppingCart.add_product` method increments `product_quantities` each time a product is added. I considered calculating `product_quantites` only when getting the savings, as this is the only time it's needed and would be more memory efficient. However, this would have increased the time complexity to O(n) instead of O(1).
+-   `print_receipt`is implemented as a function for simplicity, as it is only responsible for printing the receipt and not storing information.
+-   After completing the main task, I switched from using `float`s to `Decimal`s for price calculations. This introduced some complexity, such as converting all values to `Decimal` to perform arithmetic operations, and is less performant. However, it addresses issues related to float imprecision errors (example below) which could have severe consequences in financial applications. It also removed the need to repeat rounding and string formatting in multiple places in the code, which is error prone.
 
 ```
->>> float(10.0-9.2)
+>>> 10.0-9.2
 0.8000000000000007
+```
+
+```
+>>> Decimal("10") - Decimal("9.2")
+Decimal('0.8')
 ```
 
 ### Future improvements
 
--   **Handling Invalid Items**: The current implementation raises an error when an invalid item is scanned. In practice, it might be more user-friendly not to halt the program but rather add invalid items to a list. You could use a logging library to generate warnings about invalid items, allowing supermarket workers to take corrective action and remove the invalid item. You could add a check for the invalid_items list to be empty before you can checkout. EG:
+-   **Handling Invalid Items**: The current implementation raises an error when an invalid item is scanned, which is not user-friendly. Instead you could add invalid items to a list and use a logging library to generate warnings about invalid items. This would allow supermarket workers to take corrective action and remove the invalid item. You could add a check that `invalid_items` is empty before you can checkout. EG:
 
 ```
 if product := self.product_catalogue.get(product_name):
     ...
 else:
     logger.warn(f"Invalid item scanned {product_name}: {quantity}")
-    invalid_products.append((product_name, quantity))
+    self.invalid_products.append((product_name, quantity))
 ```
 
--   **Removing Items**: Implementing the ability to remove items would be needed for a functional checkout software. This could involve adding a `remove_item(item_name, quantity)` method to decrement the count in `product_quantities.` It would also require adjusting the total property to include calculations for removed items and savings.
+-   **Removing Items**: This could involve adding a `remove_item(item_name, quantity)` method to decrement the count in `product_quantities`, and subtracting the cost of removed items when caclulation the total.
 
--   **Payment and Change Calculation**: Currently, the receipt does not show the payment or change. This could be improved by adding a `pay(amount)` method and calculating change as `abs(self.total - self.paid)` after validating that the customer has paid enough.
+-   **Payment and Change Calculation**: This could be added by implementing `pay(amount)` method and calculating change as `abs(self.total - self.paid)` after validating that the customer has paid enough.
 
--   **Scalability**: In a more real-lift scenario where there would be 1000s of items and offers, you would retrieve items and offers via an API. A relational database on the backend could be used to fetch offers specific to the items in the cart, optimizing performance by eliminating the need to iterate through all available offers.
+-   **Scalability**: In a more realistic scenario where there would be 1000s of items and offers, you would retrieve items and offers via an API. A relational database on the backend could be used to fetch offers specific to the items in the cart, optimizing performance by eliminating the need to iterate through all available offers.
 
--   **User Experience** - You could consider checking for offers immediately after each item is scanned. This might provide immediate validation to the customer that the discount worked. However, this approach would come at the cost of additional complexity in terms of keeping track of applied discounts and removing them if items are removed from the cart.
+-   **User Experience** - You could consider checking for offers after each item is scanned. This would provide immediate validation to the customer that the offer worked. However, this would come at the cost of additional complexity in terms of keeping track of applied offers and removing them if items are removed from the cart.
